@@ -1,3 +1,8 @@
+from pathlib import Path
+
+from rich.progress import track
+
+
 def split_composite_file(composite_src: list[str]) -> tuple[list[str], list[str]]:
     """
     Split composite data file into its components.
@@ -45,3 +50,28 @@ def split_composite_file(composite_src: list[str]) -> tuple[list[str], list[str]
     anthro = [*core, *custom]
 
     return anthro, landmark
+
+
+def file_pipeline(in_file: Path) -> None:
+    """"""
+    composite_src = in_file.read_text().splitlines()
+    anthro, landmark = split_composite_file(composite_src)
+
+    base_stem = in_file.stem
+    anthro_filepath = in_file.with_stem(f"{base_stem}.anthro")
+    landmark_filepath = in_file.with_stem(f"{base_stem}.lmk")
+
+    anthro_filepath.write_text("\n".join(anthro))
+    landmark_filepath.write_text("\n".join(landmark))
+
+
+def batch_pipeline(in_dir: Path, pattern: str = "*_composite.txt", recurse: bool = False) -> None:
+    """"""
+    if recurse:
+        pattern = f"**/{pattern}"
+
+    # Listify here to get progress
+    composite_files = list(in_dir.glob(pattern))
+
+    for composite_file in track(composite_files, description="Splitting..."):
+        file_pipeline(composite_file)
