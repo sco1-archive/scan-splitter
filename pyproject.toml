@@ -13,8 +13,13 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
     "Typing :: Typed",
 ]
+packages = [{include = "src"},]
+
+[tool.poetry.scripts]
+scansplitter = "src.ui:scansplitter_cli"
 
 [tool.poetry.dependencies]
 python = "^3.9"

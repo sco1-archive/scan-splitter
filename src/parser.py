@@ -53,7 +53,20 @@ def split_composite_file(composite_src: list[str]) -> tuple[list[str], list[str]
 
 
 def file_pipeline(in_file: Path) -> None:
-    """"""
+    """
+    Split the provided composite file into its anthro & landmark components.
+
+    Split files are written to the same directory as the input file:
+        * Anthro components append ".anthro" to the name of the file
+        * Landmark components append ".lmk" to the name of the file
+
+    e.g. `./some_scan_composite.txt` becomes:
+        `./some_scan_composite.anthro.txt` and `./some_scan_composite.lmk.txt`
+
+    Comments (lines containing `*`) and header lines (lines beginning with `#`) are discarded
+
+    NOTE: Any existing anthro & landmark files will be overwritten
+    """
     composite_src = in_file.read_text().splitlines()
     anthro, landmark = split_composite_file(composite_src)
 
@@ -66,7 +79,13 @@ def file_pipeline(in_file: Path) -> None:
 
 
 def batch_pipeline(in_dir: Path, pattern: str = "*_composite.txt", recurse: bool = False) -> None:
-    """"""
+    """
+    Batch process all files in the specified directory that match the provided glob pattern.
+
+    Recursion can optionally be specified by `recurse`.
+
+    NOTE: If `recurse` is `True`, do not include `**` in `pattern`, this is not guarded against.
+    """
     if recurse:
         pattern = f"**/{pattern}"
 
