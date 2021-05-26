@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from rich.progress import track
+from rich import print as rprint
 
 
 def split_composite_file(composite_src: list[str]) -> tuple[list[str], list[str]]:
@@ -67,15 +67,19 @@ def file_pipeline(in_file: Path) -> None:
 
     NOTE: Any existing anthro & landmark files will be overwritten
     """
-    composite_src = in_file.read_text().splitlines()
-    anthro, landmark = split_composite_file(composite_src)
-
     base_stem = in_file.stem
     anthro_filepath = in_file.with_stem(f"{base_stem}.anthro")
     landmark_filepath = in_file.with_stem(f"{base_stem}.lmk")
 
+    rprint(f"Processing {base_stem!r} ... ", end="")
+
+    composite_src = in_file.read_text().splitlines()
+    anthro, landmark = split_composite_file(composite_src)
+
     anthro_filepath.write_text("\n".join(anthro))
     landmark_filepath.write_text("\n".join(landmark))
+
+    rprint("[green]Done!")
 
 
 def batch_pipeline(in_dir: Path, pattern: str = "*_composite.txt", recurse: bool = False) -> None:
@@ -89,8 +93,5 @@ def batch_pipeline(in_dir: Path, pattern: str = "*_composite.txt", recurse: bool
     if recurse:
         pattern = f"**/{pattern}"
 
-    # Listify here to get progress
-    composite_files = list(in_dir.glob(pattern))
-
-    for composite_file in track(composite_files, description="Splitting..."):
+    for composite_file in in_dir.glob(pattern):
         file_pipeline(composite_file)

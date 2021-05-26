@@ -27,6 +27,7 @@ def single(
 @scansplitter_cli.command()
 def batch(
     scan_dir: Path = typer.Option(None, exists=True, file_okay=False, dir_okay=True),
+    pattern: str = typer.Option("*_composite.txt"),
     recurse: bool = False,
 ) -> None:
     """
@@ -39,7 +40,7 @@ def batch(
     if scan_dir is None:
         scan_dir = _prompt_for_dir()
 
-    parser.batch_pipeline(scan_dir, recurse=recurse)
+    parser.batch_pipeline(scan_dir, pattern=pattern, recurse=recurse)
 
 
 @scansplitter_cli.callback(invoke_without_command=True, no_args_is_help=True)
