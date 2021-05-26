@@ -21,7 +21,9 @@ $ pip install .
 ```
 
 ## Standalone Usage
-Self-contained executables are provided for each release. They can be downloaded from [the project's Releases page](https://github.com/sco1/scan-splitter/releases).
+For users on Windows, self-contained executables are provided for each release.
+
+They can be downloaded from [the project's Releases page](https://github.com/sco1/scan-splitter/releases).
 
 ## Usage
 Once installed, the `scansplitter` CLI can be invoked directly from the command line:

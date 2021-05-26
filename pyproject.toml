@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Scan Splitter"
-version = "0.1.0"
+version = "1.0.0"
 description = "Split composite scan files into separate landmark & measurement files"
 authors = ["sco1 <sco1.git@gmail.com>"]
 
@@ -8,8 +8,10 @@ readme = "README.md"
 homepage = "https://github.com/sco1/"
 repository = "https://github.com/sco1/scan-splitter"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
