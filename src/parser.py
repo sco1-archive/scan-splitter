@@ -3,6 +3,26 @@ from pathlib import Path
 from rich import print as rprint
 
 
+def _clean_line(line: str) -> str:
+    """ """
+    # All non-header lines are assumed to lead off with a validitity flag (0 or 1) that we can
+    # strip off, if present
+    line = line.removeprefix("1").removeprefix("0")
+    line = line.strip()
+
+    # Short circuit on comment lines because they may not have the same format as data rows
+    if line.startswith("*"):
+        return line
+
+    # Remove any colons from the line
+    line = line.replace(":", "")
+
+    # Replace tabs
+    line = line.replace("\t", " ")
+
+    return line
+
+
 def split_composite_file(composite_src: list[str]) -> tuple[list[str], list[str]]:
     """
     Split composite data file into its components.
@@ -34,9 +54,10 @@ def split_composite_file(composite_src: list[str]) -> tuple[list[str], list[str]
             in_header = True
             continue
 
-        # All non-comment lines are assumed to lead off with a validitity flag (0 or 1) that we can
-        # strip off, if present
-        line = line.removeprefix("1  ").removeprefix("0  ")
+        # Clean the line before checking for a comment (starts with *) since they'll still have a
+        # validitiy prefix
+        # Comment lines short-circuit the line cleaner so they'll start with * when returned
+        line = _clean_line(line)
         if line.startswith("*"):
             # Discard comments
             continue

@@ -1,6 +1,11 @@
 name: lint-and-test
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:  # Don't double-run for tags
+      - '**'
 
 jobs:
   lint-and-test:  # Additional linting done by pre-commit.ci
