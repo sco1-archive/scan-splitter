@@ -1,10 +1,15 @@
 import re
+import typing as t
 from pathlib import Path
 
 from rich import print as rprint
 
 # Matches a positive/negative float preceeded by whitespace
 FLOAT_PATTERN = r"\s([-+]?\d*\.\d+)"
+
+# Default Headers
+ANTHRO_HEADER = ["Measurement Name,Measurement"]
+LANDMARK_HEADER = ["Landmark Name,x,y,z"]
 
 
 def _clean_line(line: str) -> str:
@@ -105,6 +110,20 @@ def split_composite_file(composite_src: list[str]) -> tuple[list[str], list[str]
     return anthro, landmark
 
 
+def _dump_chunk(filepath: Path, data: list[str], header: t.Optional[list[str]] = None) -> None:
+    """
+    Write the input header & data line(s) to the provided output filepath.
+
+    NOTE: Any existing file will be overwritten
+    """
+    with filepath.open("w") as f:
+        if header:
+            # Headers need a trailing newline since they'll be followed by our data
+            f.write("".join(f"{line}\n" for line in header))
+
+        f.write("\n".join(data))
+
+
 def file_pipeline(in_file: Path) -> None:
     """
     Split the provided composite file into CSVs of its anthro & landmark components.
@@ -129,8 +148,8 @@ def file_pipeline(in_file: Path) -> None:
     composite_src = in_file.read_text().splitlines()
     anthro, landmark = split_composite_file(composite_src)
 
-    anthro_filepath.write_text("\n".join(anthro))
-    landmark_filepath.write_text("\n".join(landmark))
+    _dump_chunk(anthro_filepath, anthro, ANTHRO_HEADER)
+    _dump_chunk(landmark_filepath, landmark, LANDMARK_HEADER)
 
     rprint("[green]Done!")
 
@@ -146,5 +165,9 @@ def batch_pipeline(in_dir: Path, pattern: str = "*_composite.txt", recurse: bool
     if recurse:
         pattern = f"**/{pattern}"
 
+    n = 0
     for composite_file in in_dir.glob(pattern):
         file_pipeline(composite_file)
+        n += 1
+
+    rprint(f"Processed {n} files")

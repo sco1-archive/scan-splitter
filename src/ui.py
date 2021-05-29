@@ -9,6 +9,43 @@ from src import parser
 scansplitter_cli = typer.Typer()
 
 
+def _prompt_for_file(title: str, start_dir: Path = Path()) -> Path:  # pragma: no cover
+    """Open a Tk file selection dialog to prompt the user to select a single file for processing."""
+    root = tk.Tk()
+    root.withdraw()
+
+    picked = filedialog.askopenfilename(
+        title=title,
+        initialdir=start_dir,
+        multiple=False,
+        filetypes=[
+            ("Composite Scan Data", "*.txt"),
+            ("All Files", "*.*"),
+        ],
+    )
+
+    if not picked:
+        raise ValueError("No file selected for parsing")
+
+    return Path(picked)
+
+
+def _prompt_for_dir(start_dir: Path = Path()) -> Path:  # pragma: no cover
+    """Open a Tk file selection dialog to prompt the user to select a directory for processing."""
+    root = tk.Tk()
+    root.withdraw()
+
+    picked = filedialog.askdirectory(
+        title="Select directory for batch processing",
+        initialdir=start_dir,
+    )
+
+    if not picked:
+        raise ValueError("No directory selected for parsing")
+
+    return Path(picked)
+
+
 @scansplitter_cli.command()
 def single(
     scan_filepath: Path = typer.Option(None, exists=True, file_okay=True, dir_okay=False),
@@ -48,27 +85,6 @@ def main(ctx: typer.Context) -> None:  # pragma: no cover
     """Split composite scan file(s) into separate landmark & measurement files."""
     # Provide a callback for the base invocation to display the help text & exit.
     pass
-
-
-def _prompt_for_file(title: str, start_dir: Path = Path()) -> Path:  # pragma: no cover
-    """Open a Tk file selection dialog to prompt the user to select a single file for processing."""
-    root = tk.Tk()
-    root.withdraw()
-
-    return Path(filedialog.askopenfilename(title=title, initialdir=start_dir, multiple=False))
-
-
-def _prompt_for_dir(start_dir: Path = Path()) -> Path:  # pragma: no cover
-    """Open a Tk file selection dialog to prompt the user to select a directory for processing."""
-    root = tk.Tk()
-    root.withdraw()
-
-    return Path(
-        filedialog.askdirectory(
-            title="Select directory for batch processing",
-            initialdir=start_dir,
-        )
-    )
 
 
 if __name__ == "__main__":  # pragma: no cover
