@@ -3,7 +3,7 @@ from pathlib import Path
 from tkinter import filedialog
 
 import typer
-from src import parser
+from src import io
 
 
 scansplitter_cli = typer.Typer()
@@ -58,7 +58,7 @@ def single(
     if scan_filepath is None:
         scan_filepath = _prompt_for_file(title="Select scan file to slice")
 
-    parser.file_pipeline(scan_filepath)
+    io.file_pipeline(scan_filepath)
 
 
 @scansplitter_cli.command()
@@ -77,7 +77,7 @@ def batch(
     if scan_dir is None:
         scan_dir = _prompt_for_dir()
 
-    parser.batch_pipeline(scan_dir, pattern=pattern, recurse=recurse)
+    io.batch_pipeline(scan_dir, pattern=pattern, recurse=recurse)
 
 
 @scansplitter_cli.callback(invoke_without_command=True, no_args_is_help=True)
