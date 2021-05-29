@@ -158,3 +158,67 @@ def test_composite_file_parsing(  # noqa: D103
 
     assert anthro == truth_anthro
     assert landmark == truth_landmark
+
+
+SUBJ_ID_TEST_CASES = [
+    (
+        "1 2021-04-20_18-00-00_composite",
+        ("1", ""),
+    ),
+    (
+        "001 2021-04-20_18-00-00_composite",
+        ("001", ""),
+    ),
+    (
+        "CPEN1 2021-04-20_18-00-00_composite",
+        ("1", "CPEN"),
+    ),
+    (
+        "CPEN001 2021-04-20_18-00-00_composite",
+        ("001", "CPEN"),
+    ),
+    (
+        "cpen001 2021-04-20_18-00-00_composite",
+        ("001", "cpen"),
+    ),
+    (
+        "A001 2021-04-20_18-00-00_composite",
+        ("001", "A"),
+    ),
+    (
+        "A1 2021-04-20_18-00-00_composite",
+        ("1", "A"),
+    ),
+    (
+        "a1 2021-04-20_18-00-00_composite",
+        ("1", "a"),
+    ),
+]
+
+
+@pytest.mark.parametrize(("raw_line", "truth_id"), SUBJ_ID_TEST_CASES)
+def test_subject_id_extraction(raw_line: str, truth_id: tuple[str, str]) -> None:  # noqa: D103
+    assert parser.extract_subj_id(raw_line) == truth_id
+
+
+def test_no_subject_id_raises() -> None:  # noqa: D103
+    with pytest.raises(ValueError):
+        parser.extract_subj_id("2021-04-20_18-00-00_composite")
+
+
+SAMPLE_DEFAULT_LOCATION = "FOO"
+LOCATION_INSERTION_TEST_CASES = [
+    (
+        "001 2021-04-20_18-00-00_composite",
+        ("001", SAMPLE_DEFAULT_LOCATION),
+    ),
+    (
+        "CPEN001 2021-04-20_18-00-00_composite",
+        ("001", "CPEN"),
+    ),
+]
+
+
+@pytest.mark.parametrize(("raw_line", "truth_id"), LOCATION_INSERTION_TEST_CASES)
+def test_default_location_insertion(raw_line: str, truth_id: tuple[str, str]) -> None:  # noqa: D103
+    assert parser.extract_subj_id(raw_line, default_location=SAMPLE_DEFAULT_LOCATION) == truth_id

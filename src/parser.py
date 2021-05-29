@@ -4,6 +4,9 @@ import re
 # Matches a positive/negative float preceeded by whitespace
 FLOAT_PATTERN = r"\s([-+]?\d*\.\d+)"
 
+# Match the location and/or subject number at the beginning of the filename
+SUBJ_RE = r"^([a-zA-Z]*)(\d+)\s"
+
 
 def _clean_line(line: str) -> str:
     """
@@ -101,3 +104,25 @@ def split_composite_file(composite_src: list[str]) -> tuple[list[str], list[str]
     anthro = [*core, *custom]
 
     return anthro, landmark
+
+
+def extract_subj_id(filename: str, default_location: str = "") -> tuple[str, str]:
+    """
+    Extract the subject ID & measurement location from the given filename.
+
+    Filenames are assumed to be of the form: `102 2021-05-18_15-02-42_composite`, where `102` is the
+    subject ID. IDs may also be concatenated with the measurement location (e.g. `CPEN102`), which
+    is also extracted.
+
+    If no measurement location is specified, `default_location` is used.
+    """
+    match = re.search(SUBJ_RE, filename)
+
+    if not match:
+        raise ValueError(f"Could not find subject ID or location in '{filename}'")
+
+    location, subj_id = match.groups()
+    if not location:
+        location = default_location
+
+    return subj_id, location
