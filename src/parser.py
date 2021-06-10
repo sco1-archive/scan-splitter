@@ -126,3 +126,9 @@ def extract_subj_id(filename: str, default_location: str = "") -> tuple[str, str
         location = default_location
 
     return subj_id, location
+
+
+def extract_measurement_names(data_file_src: str) -> list[str]:
+    """Extract the row name (first column) from the provided plaintext data file."""
+    data_lines = data_file_src.splitlines()
+    return [row.split(",")[0] for row in data_lines]

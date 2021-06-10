@@ -222,3 +222,40 @@ LOCATION_INSERTION_TEST_CASES = [
 @pytest.mark.parametrize(("raw_line", "truth_id"), LOCATION_INSERTION_TEST_CASES)
 def test_default_location_insertion(raw_line: str, truth_id: tuple[str, str]) -> None:  # noqa: D103
     assert parser.extract_subj_id(raw_line, default_location=SAMPLE_DEFAULT_LOCATION) == truth_id
+
+
+ROW_EXTRACTION_TEST_CASES = [
+    (
+        dedent(
+            """\
+            Measurement Name,Measurement
+            Actual Weight,123.45
+            Abdomen Circum Tape Measure,3.14
+            """
+        ),
+        [
+            "Measurement Name",
+            "Actual Weight",
+            "Abdomen Circum Tape Measure",
+        ],
+    ),
+    (
+        dedent(
+            """\
+            SS_Vars
+            Actual_Weight
+            Abdomen_Circum_Tape_Measure
+            """
+        ),
+        [
+            "SS_Vars",
+            "Actual_Weight",
+            "Abdomen_Circum_Tape_Measure",
+        ],
+    ),
+]
+
+
+@pytest.mark.parametrize(("raw_src", "truth_rownames"), ROW_EXTRACTION_TEST_CASES)
+def test_row_name_extraction(raw_src: str, truth_rownames: list[str]) -> None:  # noqa: D103
+    assert parser.extract_measurement_names(raw_src) == truth_rownames

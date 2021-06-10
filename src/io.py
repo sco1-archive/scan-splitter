@@ -73,3 +73,70 @@ def batch_split_pipeline(
         n += 1
 
     rprint(f"Processed {n} files")
+
+
+def _nonempty_line_count(src: str) -> int:
+    """Count the number of non-empty lines present in the provided source string."""
+    return sum(1 for line in src.splitlines() if line.strip())
+
+
+def _has_same_n_rows(data_file: Path, new_row_names: Path) -> bool:
+    """Check that the two files provided have the same number of non-empty lines."""
+    return _nonempty_line_count(data_file.read_text()) == _nonempty_line_count(
+        new_row_names.read_text()
+    )
+
+
+def _build_aggregate_header(files: list[Path], header_prefix: str, location_fill: str) -> str:
+    """Generate the header line for the aggregate measurement CSV."""
+    col_names = []
+    for file in files:
+        subj_id, location = parser.extract_subj_id(file.name, location_fill)
+        col_names.append(f"{location}{subj_id}")
+
+    return f"{header_prefix},{','.join(col_names)}"
+
+
+def anthro_measure_aggregation_pipeline(
+    anthro_dir: Path,
+    new_row_names: t.Optional[Path],
+    location_fill: str = "",
+    pattern: str = "*_composite.anthro.csv",
+    recurse: bool = False,
+) -> None:
+    """Aggregate a directory of split anthro measurement files into a single CSV."""
+    if recurse:
+        pattern = f"**/{pattern}"
+
+    # Listify here so we can run some short-circuit checks on a sample file before launching into
+    # the rest of the pipeline
+    anthro_files = list(anthro_dir.glob(pattern))
+    if not anthro_files:
+        rprint(f"No files found in '{anthro_dir}' matching '{pattern}'")
+        return
+    else:
+        rprint(f"Found {len(anthro_files)} anthro measurement files to aggregate.")
+
+    # Get measurement (row) names, either from the first measurement file or from the specified
+    # replacement file
+    # All measurement files are assumed to contain the same number & order of measurements
+    if new_row_names:
+        # Do a basic check to see if the replacement file has the same number of rows
+        # Both files are assumed to contain one header line
+        if not _has_same_n_rows(anthro_files[0], new_row_names):
+            rprint(
+                f"Length mismatch between anthro files & replacement measurement names, please check your file: '{new_row_names}'"  # noqa: E501
+            )
+            return
+        else:
+            rprint("Using replacement measurement names.")
+            row_names = parser.extract_measurement_names(new_row_names.read_text())
+    else:
+        rprint(f"Using measurement names from: '{anthro_files[0].name}'")
+        row_names = parser.extract_measurement_names(anthro_files[0].read_text())
+
+    # Build the aggregate header line, which appends all of the subject IDs to the header of the row
+    # names
+    aggregate_header = _build_aggregate_header(
+        anthro_files, header_prefix=row_names[0], location_fill=location_fill
+    )

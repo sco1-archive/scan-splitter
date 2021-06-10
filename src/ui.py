@@ -83,7 +83,7 @@ def batch(
 @scansplitter_cli.command()
 def aggregate(
     anthro_dir: Path = typer.Option(None, exists=True, file_okay=False, dir_okay=True),
-    new_names: Path = typer.Option(None, exists=True, file_okay=True, dir_okay=False),
+    new_row_names: Path = typer.Option(None, exists=True, file_okay=True, dir_okay=False),
     location_fill: str = "",
     pattern: str = typer.Option("*_composite.anthro.csv"),
     recurse: bool = False,
@@ -95,7 +95,16 @@ def aggregate(
 
     Recursive processing may be optionally specified (Default: `False`).
     """
-    raise NotImplementedError
+    if anthro_dir is None:
+        anthro_dir = _prompt_for_dir()
+
+    io.anthro_measure_aggregation_pipeline(
+        anthro_dir,
+        new_row_names=new_row_names,
+        location_fill=location_fill,
+        pattern=pattern,
+        recurse=recurse,
+    )
 
 
 @scansplitter_cli.callback(invoke_without_command=True, no_args_is_help=True)
