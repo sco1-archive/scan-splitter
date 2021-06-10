@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Scan Splitter"
-version = "1.0.0"
+version = "1.1.0"
 description = "Split composite scan files into separate landmark & measurement files"
 authors = ["sco1 <sco1.git@gmail.com>"]
 
@@ -30,6 +30,7 @@ typer = "^0.3"
 
 [tool.poetry.dev-dependencies]
 black = "^21.5b1"
+bump2version = "^1.0"
 flake8 = "^3.8"
 flake8-annotations = "^2.6"
 flake8-bugbear = "^21.4"

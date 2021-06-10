@@ -47,10 +47,12 @@ Show the tool's help message & exit.
 ### `scansplitter single`
 Slice the provided scan file and output to CSV.
 
+Inline help may also be viewed using `$ scansplitter single --help`
+
 #### Input Parameters
 | Parameter         | Description                          | Type    | Default    |
 |-------------------|--------------------------------------|---------|------------|
-| `--scan-filepath` | Path to composite scan file to split | String  | GUI Prompt |
+| `--scan-filepath` | Path to composite scan file to split | Path    | GUI Prompt |
 
 #### Examples
 ```bash
@@ -61,10 +63,12 @@ Processing '067 2021-05-18_06-30-20_composite' ... Done!
 ### `scansplitter batch`
 Batch process all scans in the specified directory and output to CSVs.
 
+Inline help may also be viewed using `$ scansplitter batch --help`
+
 #### Input Parameters
 | Parameter                  | Description                                                       | Type   | Default             |
 |----------------------------|-------------------------------------------------------------------|--------|---------------------|
-| `--scan-dir`               | Path to directory of composite scan files to split                | String | GUI Prompt          |
+| `--scan-dir`               | Path to directory of composite scan files to split                | Path   | GUI Prompt          |
 | `--pattern`                | Glob pattern to use for selecting scan files to split<sup>1</sup> | String | `"*_composite.txt"` |
 | `--recurse / --no-recurse` | Recurse through child directories & process all scan files        | Bool   | `False`             |
 
@@ -88,17 +92,38 @@ Processing '069 2021-05-18_07-04-46_composite' ... Done!
 ### `scansplitter aggregate`
 Aggregate a directory of split anthro measurement files into a single CSV.
 
-#### Input Parameters
-| Parameter                  | Description                                                             | Type   | Default                    |
-|----------------------------|-------------------------------------------------------------------------|--------|----------------------------|
-| `--anthro-dir`             | Path to directory of anthro files to aggregate                          | String | GUI Prompt                 |
-| `--new_names`              | Optional path to a text file for replacement of antho measurement names | String | `None`                     |
-| `--location_fill`          | Optional fill value for measurement site if missing from filename       | String | `None`                     |
-| `--pattern`                | Glob pattern to use for selecting anthro files to aggregate<sup>1</sup> | String | `"*_composite.anthro.csv"` |
-| `--recurse / --no-recurse` | Recurse through child directories & process all scan files              | Bool   | `False`                    |
+Inline help may also be viewed using `$ scansplitter aggregate --help`
 
-1. **NOTE:** This scan pattern is assumed to be case-sensitive
+#### Input Parameters
+| Parameter                  | Description                                                                         | Type   | Default                    |
+|----------------------------|-------------------------------------------------------------------------------------|--------|----------------------------|
+| `--anthro-dir`             | Path to directory of anthro files to aggregate                                      | Path   | GUI Prompt                 |
+| `--new_names`              | Optional path to a text file for replacement of antho measurement names<sup>1</sup> | Path   | `None`                     |
+| `--location_fill`          | Optional fill value for measurement site if missing from filename                   | String | `""`                       |
+| `--pattern`                | Glob pattern to use for selecting anthro files to aggregate<sup>2</sup>             | String | `"*_composite.anthro.csv"` |
+| `--recurse / --no-recurse` | Recurse through child directories & process all scan files                          | Bool   | `False`                    |
+
+1. **NOTE:** Quantity and order of replacement row names is assumed to match all scans being aggregated. Only quantity is checked before processing.
+2. **NOTE:** This scan pattern is assumed to be case-sensitive
 
 #### Examples
 ```bash
+$ scansplitter aggregate
+Found 84 anthro measurement files to aggregate.
+Using measurement names from: '001 2021-03-31_18-20-36_composite.anthro.csv'
+Consolidated measurements file written to: '<data path>/consolidated_anthro.CSV'
+```
+
+```bash
+$ scansplitter aggregate --location-fill TBS
+Found 84 anthro measurement files to aggregate.
+Using measurement names from: '001 2021-03-31_18-20-36_composite.anthro.csv'
+Consolidated measurements file written to: '<data path>/consolidated_anthro.CSV'
+```
+
+```bash
+$ scansplitter aggregate --new-row-names "./updated_row_names.txt"
+Found 84 anthro measurement files to aggregate.
+Using replacement measurement names.
+Consolidated measurements file written to: '<data path>/consolidated_anthro.CSV'
 ```
