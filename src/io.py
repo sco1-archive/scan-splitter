@@ -97,6 +97,43 @@ def _build_aggregate_header(files: list[Path], header_prefix: str, location_fill
     return f"{header_prefix},{','.join(col_names)}"
 
 
+def _merge_measurements(files: list[Path], row_names: list[str]) -> list[str]:
+    """
+    Merge measurement values from the provided list of anthro measurement files.
+
+    Files are assumed to be of the format output by our scan splitting pipeline. Measurements are
+    merged into a list of strings, one measurement per row.
+
+    e.g.:
+        some,header
+        measurement a,11
+        measurement b,12
+
+        some,header
+        measurement a,21
+        measurement b,22
+
+    Becomes:
+        ["measurement a,11,21", "measurement b,12,22"]
+
+    Row names and order are assumed to be consistent across all input files, as well as the input
+    list of row names
+    """
+    # Iterate through all of the anthro measurement files & pull in the entire measurements column
+    # for each file & store into a list of lists
+    all_measurements = []
+    for file in files:
+        data_lines = file.read_text().splitlines()[1:]  # skip header line
+        values = [line.split(",")[1] for line in data_lines]
+        all_measurements.append(values)
+
+    # Since we have a list of columns, we can use zip to join them into a row for each column
+    # We can also add the row names (sans header) in with this step
+    joined_measurements = [",".join(line) for line in zip(row_names[1:], *all_measurements)]
+
+    return joined_measurements
+
+
 def anthro_measure_aggregation_pipeline(
     anthro_dir: Path,
     new_row_names: t.Optional[Path],
@@ -140,3 +177,8 @@ def anthro_measure_aggregation_pipeline(
     aggregate_header = _build_aggregate_header(
         anthro_files, header_prefix=row_names[0], location_fill=location_fill
     )
+    joined_measurements = _merge_measurements(anthro_files, row_names)
+
+    out_filepath = anthro_dir / "consolidated_anthro.CSV"
+    _dump_chunk(out_filepath, joined_measurements, [aggregate_header])
+    rprint(f"Consolidated measurements file written to: '{out_filepath}'")
