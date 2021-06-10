@@ -14,7 +14,7 @@ def _prompt_for_file(title: str, start_dir: Path = Path()) -> Path:  # pragma: n
     root = tk.Tk()
     root.withdraw()
 
-    picked = filedialog.askopenfilename(
+    picked = filedialog.askopenfilename(  # type: ignore[no-untyped-call]  # stubs need mypy bump
         title=title,
         initialdir=start_dir,
         multiple=False,
@@ -35,7 +35,7 @@ def _prompt_for_dir(start_dir: Path = Path()) -> Path:  # pragma: no cover
     root = tk.Tk()
     root.withdraw()
 
-    picked = filedialog.askdirectory(
+    picked = filedialog.askdirectory(  # type: ignore[no-untyped-call]  # stubs need mypy bump
         title="Select directory for batch processing",
         initialdir=start_dir,
     )
@@ -58,7 +58,7 @@ def single(
     if scan_filepath is None:
         scan_filepath = _prompt_for_file(title="Select scan file to slice")
 
-    io.file_pipeline(scan_filepath)
+    io.file_split_pipeline(scan_filepath)
 
 
 @scansplitter_cli.command()
@@ -77,7 +77,25 @@ def batch(
     if scan_dir is None:
         scan_dir = _prompt_for_dir()
 
-    io.batch_pipeline(scan_dir, pattern=pattern, recurse=recurse)
+    io.batch_split_pipeline(scan_dir, pattern=pattern, recurse=recurse)
+
+
+@scansplitter_cli.command()
+def aggregate(
+    anthro_dir: Path = typer.Option(None, exists=True, file_okay=False, dir_okay=True),
+    new_names: Path = typer.Option(None, exists=True, file_okay=True, dir_okay=False),
+    location_fill: str = "",
+    pattern: str = typer.Option("*_composite.anthro.csv"),
+    recurse: bool = False,
+) -> None:
+    """
+    Aggregate a directory of split anthro measurement files into a single CSV.
+
+    If no processing directory is specified, the user will be prompted to select one.
+
+    Recursive processing may be optionally specified (Default: `False`).
+    """
+    raise NotImplementedError
 
 
 @scansplitter_cli.callback(invoke_without_command=True, no_args_is_help=True)

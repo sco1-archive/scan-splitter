@@ -48,28 +48,29 @@ Show the tool's help message & exit.
 Slice the provided scan file and output to CSV.
 
 #### Input Parameters
-| Parameter         | Description                                     | Type    | Default    |
-|-------------------|-------------------------------------------------|---------|------------|
-| `--scan-filepath` | Path to composite scan file to split            | String  | GUI Prompt |
+| Parameter         | Description                          | Type    | Default    |
+|-------------------|--------------------------------------|---------|------------|
+| `--scan-filepath` | Path to composite scan file to split | String  | GUI Prompt |
 
-### `scansplitter batch`
-Batch process all scans in the specified directory and output to CSVs.
-
-**NOTE:** Scan files must end in `*_composite.txt` to be considered for splitting. This is case-sensitive.
-
-#### Input Parameters
-| Parameter                  | Description                                                                | Type   | Default             |
-|----------------------------|----------------------------------------------------------------------------|--------|---------------------|
-| `--scan-dir`               | Path to directory of composite scan files to split                         | String | GUI Prompt          |
-| `--pattern`                | Glob pattern to use for selecting scan files to split                      | String | `"*_composite.txt"` |
-| `--recurse / --no-recurse` | Recurse through child directories & process all scan files                 | Bool   | `False`             |
-
-## Examples
+#### Examples
 ```bash
 $ scansplitter single --scan-filepath "./sample_data/067 2021-05-18_06-30-20_composite.txt"
 Processing '067 2021-05-18_06-30-20_composite' ... Done!
 ```
 
+### `scansplitter batch`
+Batch process all scans in the specified directory and output to CSVs.
+
+#### Input Parameters
+| Parameter                  | Description                                                       | Type   | Default             |
+|----------------------------|-------------------------------------------------------------------|--------|---------------------|
+| `--scan-dir`               | Path to directory of composite scan files to split                | String | GUI Prompt          |
+| `--pattern`                | Glob pattern to use for selecting scan files to split<sup>1</sup> | String | `"*_composite.txt"` |
+| `--recurse / --no-recurse` | Recurse through child directories & process all scan files        | Bool   | `False`             |
+
+1. **NOTE:** This scan pattern is assumed to be case-sensitive
+
+#### Examples
 ```bash
 $ scansplitter batch --scan-dir ./sample_data/
 Processing '067 2021-05-18_06-30-20_composite' ... Done!
@@ -82,4 +83,22 @@ $ scansplitter batch --recurse --scan-dir .
 Processing '067 2021-05-18_06-30-20_composite' ... Done!
 Processing '068 2021-05-18_06-47-57_composite' ... Done!
 Processing '069 2021-05-18_07-04-46_composite' ... Done!
+```
+
+### `scansplitter aggregate`
+Aggregate a directory of split anthro measurement files into a single CSV.
+
+#### Input Parameters
+| Parameter                  | Description                                                             | Type   | Default                    |
+|----------------------------|-------------------------------------------------------------------------|--------|----------------------------|
+| `--anthro-dir`             | Path to directory of anthro files to aggregate                          | String | GUI Prompt                 |
+| `--new_names`              | Optional path to a text file for replacement of antho measurement names | String | `None`                     |
+| `--location_fill`          | Optional fill value for measurement site if missing from filename       | String | `None`                     |
+| `--pattern`                | Glob pattern to use for selecting anthro files to aggregate<sup>1</sup> | String | `"*_composite.anthro.csv"` |
+| `--recurse / --no-recurse` | Recurse through child directories & process all scan files              | Bool   | `False`                    |
+
+1. **NOTE:** This scan pattern is assumed to be case-sensitive
+
+#### Examples
+```bash
 ```

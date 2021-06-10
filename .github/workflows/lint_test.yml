@@ -28,7 +28,7 @@ jobs:
       run: poetry run flake8 .
 
     - name: Run mypy
-      run: poetry run mypy .
+      run: poetry run mypy ./src
 
     - name: Run pytest
       run: poetry run pytest

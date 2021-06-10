@@ -24,7 +24,7 @@ def _dump_chunk(filepath: Path, data: list[str], header: t.Optional[list[str]] =
         f.write("\n".join(data))
 
 
-def file_pipeline(in_file: Path) -> None:
+def file_split_pipeline(in_file: Path) -> None:
     """
     Split the provided composite file into CSVs of its anthro & landmark components.
 
@@ -54,7 +54,9 @@ def file_pipeline(in_file: Path) -> None:
     rprint("[green]Done!")
 
 
-def batch_pipeline(in_dir: Path, pattern: str = "*_composite.txt", recurse: bool = False) -> None:
+def batch_split_pipeline(
+    in_dir: Path, pattern: str = "*_composite.txt", recurse: bool = False
+) -> None:
     """
     Batch process all files in the specified directory that match the provided glob pattern.
 
@@ -67,7 +69,7 @@ def batch_pipeline(in_dir: Path, pattern: str = "*_composite.txt", recurse: bool
 
     n = 0
     for composite_file in in_dir.glob(pattern):
-        file_pipeline(composite_file)
+        file_split_pipeline(composite_file)
         n += 1
 
     rprint(f"Processed {n} files")
