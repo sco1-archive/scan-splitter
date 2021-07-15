@@ -16,8 +16,9 @@ ignore=
     ANN002,ANN003,ANN101,ANN102,ANN204,ANN206,
     # pep8-naming
     N802,N806,N815,
-    # Bugbear
-    B008,  # Clashes with typer
 exclude=
     __pycache__,.cache,
     venv,.venv,
+per-file-ignores =
+    src/ui.py:B008  # Clashes with Typer's methodology for defaults
+    tests/*:D103
