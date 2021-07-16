@@ -5,7 +5,7 @@ from typer.testing import CliRunner
 RUNNER = CliRunner()
 
 
-def test_single_nofile_prompts(mocker: MockerFixture) -> None:  # noqa: D103
+def test_single_nofile_prompts(mocker: MockerFixture) -> None:
     mocker.patch.object(ui, "_prompt_for_file", autospec=True)
     mocker.patch.object(io, "file_split_pipeline")  # Don't run the pipeline
 
@@ -14,7 +14,7 @@ def test_single_nofile_prompts(mocker: MockerFixture) -> None:  # noqa: D103
     ui._prompt_for_file.assert_called()
 
 
-def test_single_file_no_prompt(mocker: MockerFixture) -> None:  # noqa: D103
+def test_single_file_no_prompt(mocker: MockerFixture) -> None:
     mocker.patch.object(ui, "_prompt_for_file", autospec=True)
     mocker.patch.object(io, "file_split_pipeline")  # Don't run the pipeline
 
@@ -23,7 +23,7 @@ def test_single_file_no_prompt(mocker: MockerFixture) -> None:  # noqa: D103
     ui._prompt_for_file.assert_not_called()
 
 
-def test_batch_nodir_prompts(mocker: MockerFixture) -> None:  # noqa: D103
+def test_batch_nodir_prompts(mocker: MockerFixture) -> None:
     mocker.patch.object(ui, "_prompt_for_dir", autospec=True)
     mocker.patch.object(io, "batch_split_pipeline")  # Don't run the pipeline
 
@@ -32,7 +32,7 @@ def test_batch_nodir_prompts(mocker: MockerFixture) -> None:  # noqa: D103
     ui._prompt_for_dir.assert_called()
 
 
-def test_batch_dir_no_prompt(mocker: MockerFixture) -> None:  # noqa: D103
+def test_batch_dir_no_prompt(mocker: MockerFixture) -> None:
     mocker.patch.object(ui, "_prompt_for_dir", autospec=True)
     mocker.patch.object(io, "batch_split_pipeline")  # Don't run the pipeline
 
@@ -41,7 +41,7 @@ def test_batch_dir_no_prompt(mocker: MockerFixture) -> None:  # noqa: D103
     ui._prompt_for_dir.assert_not_called()
 
 
-def test_aggregate_nodir_prompts(mocker: MockerFixture) -> None:  # noqa: D103
+def test_aggregate_nodir_prompts(mocker: MockerFixture) -> None:
     mocker.patch.object(ui, "_prompt_for_dir", autospec=True)
     mocker.patch.object(io, "anthro_measure_aggregation_pipeline")  # Don't run the pipeline
 
@@ -50,10 +50,22 @@ def test_aggregate_nodir_prompts(mocker: MockerFixture) -> None:  # noqa: D103
     ui._prompt_for_dir.assert_called()
 
 
-def test_aggregate_dir_no_prompt(mocker: MockerFixture) -> None:  # noqa: D103
+def test_aggregate_dir_no_prompt(mocker: MockerFixture) -> None:
     mocker.patch.object(ui, "_prompt_for_dir", autospec=True)
     mocker.patch.object(io, "anthro_measure_aggregation_pipeline")  # Don't run the pipeline
 
     result = RUNNER.invoke(ui.scansplitter_cli, ["aggregate", "--anthro-dir", "."])
     assert result.exit_code == 0
     ui._prompt_for_dir.assert_not_called()
+
+
+def test_bare_invocation_streamlined_pipeline(mocker: MockerFixture) -> None:
+    mocker.patch.object(ui, "_prompt_for_dir", autospec=True)
+    mocker.patch.object(io, "anthro_measure_aggregation_pipeline")  # Don't run the pipeline
+    mocker.patch.object(io, "batch_split_pipeline")  # Don't run the pipeline
+
+    result = RUNNER.invoke(ui.scansplitter_cli)
+    assert result.exit_code == 0
+    ui._prompt_for_dir.assert_called()
+    io.batch_split_pipeline.assert_called()
+    io.anthro_measure_aggregation_pipeline.assert_called()

@@ -2,6 +2,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog
 
+import click
 import typer
 from src import io
 
@@ -25,7 +26,7 @@ def _prompt_for_file(title: str, start_dir: Path = Path()) -> Path:  # pragma: n
     )
 
     if not picked:
-        raise ValueError("No file selected for parsing")
+        raise click.ClickException("No file selected for parsing, aborting.")
 
     return Path(picked)
 
@@ -41,7 +42,7 @@ def _prompt_for_dir(start_dir: Path = Path()) -> Path:  # pragma: no cover
     )
 
     if not picked:
-        raise ValueError("No directory selected for parsing")
+        raise click.ClickException("No directory selected for parsing, aborting.")
 
     return Path(picked)
 
@@ -107,11 +108,18 @@ def aggregate(
     )
 
 
-@scansplitter_cli.callback(invoke_without_command=True, no_args_is_help=True)
-def main(ctx: typer.Context) -> None:  # pragma: no cover
-    """Split composite scan file(s) into separate landmark & measurement files."""
-    # Provide a callback for the base invocation to display the help text & exit.
-    pass
+@scansplitter_cli.callback(invoke_without_command=True)
+def main(ctx: typer.Context) -> None:
+    """
+    Split composite scan file(s) into separate landmark & measurement files.
+
+    Invocation without args prompts the user to select a scan directory, then runs through the
+    default batch & aggregation pipelines.
+    """
+    if not ctx.invoked_subcommand:
+        anthro_dir = _prompt_for_dir()
+        io.batch_split_pipeline(anthro_dir)
+        io.anthro_measure_aggregation_pipeline(anthro_dir)
 
 
 if __name__ == "__main__":  # pragma: no cover

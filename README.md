@@ -6,6 +6,12 @@
 Split composite scan files into separate landmark & measurement files.
 
 ## Installation
+### Standalone Usage
+For users on Windows, self-contained executables are provided for each release.
+
+They can be downloaded from [the project's Releases page](https://github.com/sco1/scan-splitter/releases).
+
+### Via Python
 This project utilizes [`poetry`](https://python-poetry.org/) for dependency & environment management. Clone or download this repository to your local machine and create a new environment:
 
 ```bash
@@ -20,10 +26,7 @@ $ cd <project_dir>
 $ pip install .
 ```
 
-## Standalone Usage
-For users on Windows, self-contained executables are provided for each release.
-
-They can be downloaded from [the project's Releases page](https://github.com/sco1/scan-splitter/releases).
+**NOTE:** Because `pyproject.toml` is present, Poetry must be used in order to perform an editable install, as pip currently does not support editable installs from `pyproject.toml`.
 
 ## Usage
 Once installed, the `scansplitter` CLI can be invoked directly from the command line:
@@ -43,6 +46,11 @@ $ ./scansplitter.exe <inputs go here>
 
 ### `scansplitter --help`
 Show the tool's help message & exit.
+
+### `scansplitter`
+The bare invocation will execute a streamlined pipeline, prompting the user to select a directory to process & then executing the `batch` and `aggregate` commands with their default values.
+
+For Windows users, this should also be the behavior experienced when double clicking on the self-contained executable.
 
 ### `scansplitter single`
 Slice the provided scan file and output to CSV.

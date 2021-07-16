@@ -136,7 +136,7 @@ def _merge_measurements(files: list[Path], row_names: list[str]) -> list[str]:
 
 def anthro_measure_aggregation_pipeline(
     anthro_dir: Path,
-    new_row_names: t.Optional[Path],
+    new_row_names: t.Optional[Path] = None,
     location_fill: str = "",
     pattern: str = "*_composite.anthro.csv",
     recurse: bool = False,
