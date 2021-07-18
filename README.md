@@ -11,6 +11,11 @@ For users on Windows, self-contained executables are provided for each release.
 
 They can be downloaded from [the project's Releases page](https://github.com/sco1/scan-splitter/releases).
 
+These executables are built from source using [Nuitka](https://github.com/Nuitka/):
+```bash
+$ python -m nuitka ./src/ui.py --onefile --plugin-enable=tk-inter
+```
+
 ### Via Python
 This project utilizes [`poetry`](https://python-poetry.org/) for dependency & environment management. Clone or download this repository to your local machine and create a new environment:
 

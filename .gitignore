@@ -8,6 +8,10 @@ __pycache__/
 build/
 dist/
 *.spec
+*.dist/
+*.build/
+*.onefile-build/
+*.exe
 
 # Jupyter
 .ipynb_checkpoints
