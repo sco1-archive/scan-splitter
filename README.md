@@ -2,6 +2,7 @@
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/scan-splitter/main.svg)](https://results.pre-commit.ci/latest/github/sco1/scan-splitter/main)
 [![lint-and-test](https://github.com/sco1/scan-splitter/actions/workflows/lint_test.yml/badge.svg?branch=main)](https://github.com/sco1/scan-splitter/actions/workflows/lint_test.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/sco1/scan-splitter)
 
 Split composite scan files into separate landmark & measurement files.
 
@@ -13,7 +14,7 @@ They can be downloaded from [the project's Releases page](https://github.com/sco
 
 These executables are built from source using [Nuitka](https://github.com/Nuitka/):
 ```bash
-$ python -m nuitka ./src/ui.py --onefile --plugin-enable=tk-inter
+$ python -m nuitka ./src/ui.py --onefile -o scansplitter.exe --plugin-enable=tk-inter --windows-company-name=sco1 --windows-file-version=1.2.1
 ```
 
 ### Via Python

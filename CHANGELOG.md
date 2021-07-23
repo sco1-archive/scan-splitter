@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v1.2.1]
+### Fixed
+* Fixed handling of repeated composite scan files for a given subject (e.g. `123-2` or `123 (2)`).
+
 ## [v1.2.0]
 ### Changed
 * The bare `scansplitter` invocation will now execute a streamlined pipeline; The user will be prompted to select a directory to run through the `batch` and `aggregate` pipelines with their respective default values.

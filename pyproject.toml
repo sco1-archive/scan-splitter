@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Scan Splitter"
-version = "1.2.0"
+version = "1.2.1"
 description = "Split composite scan files into separate landmark & measurement files"
 authors = ["sco1 <sco1.git@gmail.com>"]
 
