@@ -1,6 +1,7 @@
 import itertools
 from textwrap import dedent
 
+import click
 import pytest
 from src import parser
 
@@ -193,6 +194,22 @@ SUBJ_ID_TEST_CASES = [
         "a1 2021-04-20_18-00-00_composite",
         ("1", "a"),
     ),
+    (
+        "1234 (2) 2021-04-20_18-00-00_composite",
+        ("1234 (2)", ""),
+    ),
+    (
+        "CPEN1234 (2) 2021-04-20_18-00-00_composite",
+        ("1234 (2)", "CPEN"),
+    ),
+    (
+        "1234-2 2021-04-20_18-00-00_composite",
+        ("1234-2", ""),
+    ),
+    (
+        "CPEN1234-2 2021-04-20_18-00-00_composite",
+        ("1234-2", "CPEN"),
+    ),
 ]
 
 
@@ -202,7 +219,7 @@ def test_subject_id_extraction(raw_line: str, truth_id: tuple[str, str]) -> None
 
 
 def test_no_subject_id_raises() -> None:  # noqa: D103
-    with pytest.raises(ValueError):
+    with pytest.raises(click.ClickException):
         parser.extract_subj_id("2021-04-20_18-00-00_composite")
 
 
