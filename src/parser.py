@@ -1,11 +1,16 @@
 import re
 
+import click
+
 
 # Matches a positive/negative float preceeded by whitespace
 FLOAT_PATTERN = r"\s([-+]?\d*\.\d+)"
 
 # Match the location and/or subject number at the beginning of the filename
-SUBJ_RE = r"^([a-zA-Z]*)(\d+)\s"
+SUBJ_RE = r"^([a-zA-Z]*)(\d+)"
+
+# Match repeat scans, denoted by either a hyphen or parentheses following the subject ID
+REPEAT_RE = r"-\d+$|\s\(\d+\)$"
 
 
 def _clean_line(line: str) -> str:
@@ -110,20 +115,34 @@ def extract_subj_id(filename: str, default_location: str = "") -> tuple[str, str
     """
     Extract the subject ID & measurement location from the given filename.
 
-    Filenames are assumed to be of the form: `102 2021-05-18_15-02-42_composite`, where `102` is the
-    subject ID. IDs may also be concatenated with the measurement location (e.g. `CPEN102`), which
-    is also extracted.
+    Filenames are assumed to be of the following forms:
+        * `102 2021-04-20_18-00-00_composite`
+        * `CPEN102 2021-04-20_18-00-00_composite`
+        * `102-2 2021-04-20_18-00-00_composite`
+        * `102 (2) 2021-04-20_18-00-00_composite`
+
+    Where `102` is the subject ID. IDs may also be concatenated with the measurement location
+    (e.g. `CPEN102`), which is also extracted. Repeat scans are denoted by either a hyphen or
+    parentheses immediately following the ID.
 
     If no measurement location is specified, `default_location` is used.
     """
-    match = re.search(SUBJ_RE, filename)
+    full_id, *_ = filename.rpartition(" ")
+    full_id = full_id.strip()
+    subj_match = re.search(SUBJ_RE, full_id)
 
-    if not match:
-        raise ValueError(f"Could not find subject ID or location in '{filename}'")
+    if not subj_match:
+        raise click.ClickException(f"Could not find subject ID or location in '{filename}'")
 
-    location, subj_id = match.groups()
+    location, subj_id = subj_match.groups()
     if not location:
         location = default_location
+
+    # Identify if composite file is for a repeat scan
+    # For now, just append the hyphen or parentheses onto the returned subject ID
+    repeat_match = re.search(REPEAT_RE, full_id)
+    if repeat_match:
+        subj_id = f"{subj_id}{repeat_match.group(0)}"
 
     return subj_id, location
 
